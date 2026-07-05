@@ -1,2 +1,5 @@
-package com.springsecurity.JwtAuthentication.config;public class SecurityConfig {
+package com.springsecurity.JwtAuthentication.config;
+
+
+public class SecurityConfig {
 }
