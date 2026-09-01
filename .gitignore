@@ -34,3 +34,8 @@ build/
 
 ### application properties ###
 application.properties
+
+.DS_Store
+
+.postman
+postman/

@@ -1,8 +1,10 @@
-package com.springsecurity.JwtAuthentication.Service;
+package com.springsecurity.jwtauthentication.Service;
 
-import com.springsecurity.JwtAuthentication.Entity.UserInfo;
-import com.springsecurity.JwtAuthentication.Repository.UserInfoRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.springsecurity.jwtauthentication.Entity.UserInfo;
+import com.springsecurity.jwtauthentication.Repository.UserInfoRepo;
+import com.springsecurity.jwtauthentication.dto.UserResponseDTO;
+import com.springsecurity.jwtauthentication.exception.UserAlreadyExistsException;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,10 +37,12 @@ public class UserInfoService implements UserDetailsService {
         return new UserInfoDetails(user);
     }
 
-    public String addUser(UserInfo userInfo) {
+    public UserInfo addUser(UserInfo userInfo) {
+        if (userInfoRepo.existsByEmail(userInfo.getEmail())) {
+            throw new UserAlreadyExistsException("User with email " + userInfo.getEmail() + " already exists");
+        }
         // Encrypt the password
         userInfo.setPassword(passwordEncoder.encode(userInfo.getPassword()));
-        userInfoRepo.save(userInfo);
-        return "User saved successfully";
+        return userInfoRepo.save(userInfo);
     }
 }

@@ -1,4 +1,4 @@
-package com.springsecurity.JwtAuthentication.dto;
+package com.springsecurity.jwtauthentication.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

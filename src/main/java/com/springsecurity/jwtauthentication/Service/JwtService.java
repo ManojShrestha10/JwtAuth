@@ -1,8 +1,7 @@
-package com.springsecurity.JwtAuthentication.Service;
+package com.springsecurity.jwtauthentication.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,8 +15,11 @@ import java.util.function.Function;
 
 @Component
 public class JwtService {
-    @Value("${jwt.secret}")
-    private String secret;
+    private final String secret;
+
+    public JwtService(@Value("${jwt.secret}") String secret) {
+        this.secret = secret;
+    }
 
     // Generate Token using email
     public String generateToken(String email) {
@@ -27,12 +29,24 @@ public class JwtService {
 
     private String createToken(Map<String, Object> claims, String email) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .claims(claims)
+                .claim("type", "access")
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
+    }
+
+    private String refreshToken(String email) {
+        return Jwts.builder()
+                .claim("type", "refresh")
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7))
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
+                .compact();
+
     }
 
     private SecretKey getSigningKey() {
@@ -59,6 +73,10 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    public String extractTokenType(String token) {
+        return extractClaim(token, claims -> claims.get("type", String.class));
     }
 
     private Boolean isTokenExpired(String token) {

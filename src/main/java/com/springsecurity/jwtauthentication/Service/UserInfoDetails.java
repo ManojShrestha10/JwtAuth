@@ -1,6 +1,6 @@
-package com.springsecurity.JwtAuthentication.Service;
+package com.springsecurity.jwtauthentication.Service;
 
-import com.springsecurity.JwtAuthentication.Entity.UserInfo;
+import com.springsecurity.jwtauthentication.Entity.UserInfo;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

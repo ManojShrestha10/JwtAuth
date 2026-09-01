@@ -1,7 +1,6 @@
-package com.springsecurity.JwtAuthentication.Filter;
+package com.springsecurity.jwtauthentication.Filter;
 
-import com.springsecurity.JwtAuthentication.JwtAuthenticationApplication;
-import com.springsecurity.JwtAuthentication.Service.JwtService;
+import com.springsecurity.jwtauthentication.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 
 @Component
