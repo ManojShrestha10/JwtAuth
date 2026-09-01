@@ -1,7 +1,6 @@
-package com.springsecurity.JwtAuthentication.config;
+package com.springsecurity.jwtauthentication.config;
 
-
-import com.springsecurity.JwtAuthentication.Filter.JwtAuthFilter;
+import com.springsecurity.jwtauthentication.Filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -11,6 +10,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,21 +25,25 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(@Lazy JwtAuthFilter jwtAuthFilter,@Lazy UserDetailsService userDetailsService) {
+    private final AuthEntryPointJwt authEntryPointJwt;
+
+    public SecurityConfig(@Lazy JwtAuthFilter jwtAuthFilter, @Lazy UserDetailsService userDetailsService, @Lazy AuthEntryPointJwt authEntryPointJwt) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
+        this.authEntryPointJwt = authEntryPointJwt;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.
-                //disable csrf (not needed for stateless jwt)
-                        csrf((csrf -> csrf.disable())).
+                // Stateless JWT API
+                        csrf((AbstractHttpConfigurer::disable)).
+                exceptionHandling((exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPointJwt))).
                 authorizeHttpRequests((auth -> auth
                         // Public endpoints
-                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken").permitAll()
-                        .requestMatchers("/auth/user/**").hasAuthority("ROLE_USER")
-                        .requestMatchers("/auth/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/auth/welcome", "/auth/addNewUser", "/auth/generateToken", "/auth/test/rateLimiter", "/auth/home", "/auth/error").permitAll()
+                        .requestMatchers("/auth/user/**").hasRole("USER")
+                        .requestMatchers("/auth/admin/**").hasRole("ADMIN")
                         //All other endpoints require authenticated
                         .anyRequest().authenticated()
                 ))
