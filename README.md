@@ -1,4 +1,3 @@
-# JwtAuth
 <a id="readme-top"></a>
 
 Issues MIT License
@@ -31,10 +30,10 @@ An IDE (IntelliJ IDEA / VS Code recommended)
 Installation
 Clone the repo
 sh
-   git clone https://github.com/your_username/jwt-authentication.git
+   git clone https://github.com/ManojShrestha10/JwtAuth.git
 Navigate into the project directory
 sh
-   cd jwt-authentication
+   cd JwtAuth
 Install dependencies
 sh
    mvn clean install
